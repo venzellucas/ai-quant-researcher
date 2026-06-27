@@ -128,6 +128,19 @@ class State:
         rows = self.db.execute("SELECT kind,text FROM journal ORDER BY id DESC LIMIT ?", (limit,)).fetchall()
         return [f"[{r['kind']}] {r['text']}" for r in rows]
 
+    def prior_sharpes(self) -> list[float]:
+        """Per-period (daily) Sharpes of all prior runs — the cross-trial
+        dispersion the Deflated Sharpe Ratio needs to penalize multiple testing."""
+        out = []
+        for r in self.db.execute("SELECT metrics FROM runs").fetchall():
+            try:
+                m = json.loads(r["metrics"])
+                if "full_sharpe_daily" in m:
+                    out.append(float(m["full_sharpe_daily"]))
+            except Exception:
+                pass
+        return out
+
     # --- summaries for the Telegram commander ----------------------------
     def summary(self) -> dict:
         def n(where=""):

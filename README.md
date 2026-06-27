@@ -84,6 +84,7 @@ port, fits the egress-only firewall). It obeys only your `chat_id`. Commands:
 - **Phase 1 (done):** transparent numpy/pandas backtest engine + strategy template
   registry (the LLM picks a template + params, never writes code) + data adapter
   (yfinance for ETFs & crypto, synthetic for offline tests) + two-way Telegram control.
-- **Phase 2:** Deflated Sharpe / FDR + walk-forward + robustness + red-team LLM pass.
+- **Phase 2 (done):** Deflated Sharpe Ratio gate (stdlib, no scipy) + walk-forward
+  fold stability + a red-team LLM pass that must clear a candidate before it pings you.
 - **Phase 3:** deploy to the hardened LXC (systemd + firewall) + tiny dashboard.
 - **Phase 4 (fun):** agent-civilization tenant on the same runtime.
