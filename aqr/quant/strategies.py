@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import re
 
 import numpy as np
 import pandas as pd
@@ -53,10 +54,21 @@ REGISTRY = {
 }
 
 
+def _resolve_template(name: str) -> str | None:
+    """Map a possibly-chatty model output (e.g. 'mean_reversion z-score reversion'
+    or 'XS Momentum') to a known slug. Free/stealth models don't always return a
+    clean slug, so normalize and substring-match rather than reject outright."""
+    key = re.sub(r"[^a-z0-9]+", "_", (name or "").lower())
+    if key in REGISTRY:
+        return key
+    return next((t for t in REGISTRY if t in key), None)
+
+
 def build_weights(template: str, prices: pd.DataFrame, params: dict | None):
-    if template not in REGISTRY:
+    key = _resolve_template(template)
+    if key is None:
         raise ValueError(f"unknown template '{template}'; choices: {list(REGISTRY)}")
-    fn = REGISTRY[template]
+    fn = REGISTRY[key]
     valid = set(inspect.signature(fn).parameters)
     kw = {k: v for k, v in (params or {}).items() if k in valid}  # ignore junk params
     return fn(prices, **kw)
