@@ -1,0 +1,22 @@
+[project]
+name = "ai-quant-researcher"
+version = "0.0.1"
+description = "Autonomous quant-research agent on OpenRouter free/stealth models"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+# Phase 1+ (the real backtest engine). Not needed for the Phase 0 plumbing.
+# Deliberately a transparent numpy/pandas engine (no vectorbt) — light to install
+# on the LXC and auditable, which matters for a system that must not fool itself.
+quant = [
+    "numpy",
+    "pandas",
+    "scipy",
+    "yfinance",
+]
+
+[tool.setuptools.packages.find]
+include = ["aqr*"]

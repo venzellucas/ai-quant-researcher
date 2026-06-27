@@ -1,0 +1,23 @@
+[Unit]
+Description=AI Quant Researcher (autonomous loop)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=aqr
+WorkingDirectory=/opt/ai-quant-researcher
+EnvironmentFile=/opt/ai-quant-researcher/.env
+ExecStart=/opt/ai-quant-researcher/.venv/bin/python -m aqr.main
+Restart=always
+RestartSec=10
+
+# process hardening (defense in depth on top of the unprivileged LXC + firewall)
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/ai-quant-researcher/data
+
+[Install]
+WantedBy=multi-user.target
