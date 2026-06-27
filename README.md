@@ -86,5 +86,7 @@ port, fits the egress-only firewall). It obeys only your `chat_id`. Commands:
   (yfinance for ETFs & crypto, synthetic for offline tests) + two-way Telegram control.
 - **Phase 2 (done):** Deflated Sharpe Ratio gate (stdlib, no scipy) + walk-forward
   fold stability + a red-team LLM pass that must clear a candidate before it pings you.
-- **Phase 3:** deploy to the hardened LXC (systemd + firewall) + tiny dashboard.
+- **Phase 3 (tooling ready):** one-command deploy to the hardened LXC via
+  `deploy/bootstrap_host.sh` + `deploy/bootstrap_ct.sh` (see `deploy/proxmox/`).
+  Tiny dashboard still to come.
 - **Phase 4 (fun):** agent-civilization tenant on the same runtime.

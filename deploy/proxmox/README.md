@@ -1,5 +1,33 @@
 # Deploying the AI Quant Researcher on a hardened Proxmox LXC
 
+## Quickest path: the bootstrap scripts (recommended)
+
+Two scripts do everything. Your secrets only ever live inside the container.
+
+```bash
+# 1) get this repo onto the Proxmox host (clone, or rsync/scp from your Mac)
+git clone git@github.com:venzellucas/ai-quant-researcher.git
+cd ai-quant-researcher
+
+# 2) create + harden + load the container (no secrets, doesn't start the service)
+sudo IPADDR=192.168.1.50/24 GATEWAY=192.168.1.1 ./deploy/bootstrap_host.sh
+#    (override CTID / STORAGE / BRIDGE / CORES / MEMORY / DISK via env as needed)
+
+# 3) finish inside the container — this is where you type your two secrets
+pct enter 105
+cd /opt/ai-quant-researcher
+./deploy/bootstrap_ct.sh
+```
+
+`bootstrap_host.sh` creates an unprivileged, no-nesting LXC with a static IP and
+public DNS, installs the egress-only firewall, injects the code straight from the
+checkout (the container never needs GitHub), and installs deps + the systemd unit.
+`bootstrap_ct.sh` prompts silently for the OpenRouter key + Telegram token, writes
+`.env` (root:600, never echoed), verifies it with a test Telegram message, and
+starts the service.
+
+The manual steps below are the same thing spelled out, for reference.
+
 ## 1. Create an unprivileged container
 
 ```bash
